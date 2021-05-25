@@ -1,10 +1,10 @@
-package org.xpathqs.i18n
+package org.xpathqs.prop
 
-import org.xpathqs.i18n.util.ReflectionScanner
+import org.xpathqs.prop.util.ReflectionScanner
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 
-class I18nParser(
+class PropParser(
     private val obj: Any,
     private val model: Map<String, Any>,
     private val rs: ReflectionScanner = ReflectionScanner(obj)
@@ -15,7 +15,7 @@ class I18nParser(
     constructor(obj: Any, resourcePath: String)
             : this(
         obj,
-        I18nParser::class.java.classLoader.getResource(resourcePath)?.openStream()
+        PropParser::class.java.classLoader.getResource(resourcePath)?.openStream()
             ?: throw IllegalArgumentException("'$resourcePath' Resource can't be found")
     )
 
@@ -33,7 +33,7 @@ class I18nParser(
 
         val objects = rs.innerObjects
         objects.forEach {
-            I18nParser(it, values)
+            PropParser(it, values)
                 .parse()
         }
     }

@@ -1,4 +1,4 @@
-package org.xpathqs.i18n.models
+package org.xpathqs.prop.models
 
 object SimpleObj {
     val s1 = ""

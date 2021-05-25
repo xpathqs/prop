@@ -1,2 +1,2 @@
-rootProject.name = "xpathqs-i18n"
+rootProject.name = "xpathqs-prop"
 

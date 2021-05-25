@@ -49,7 +49,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             pom {
                 name.set("XpathQS I18N")
-                description.set("A i18n library")
+                description.set("A prop library")
                 url.set("https://xpathqs.org/")
                 licenses {
                     license {
@@ -65,13 +65,13 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/nachg/xpathqs-i18n.git")
-                    developerConnection.set("scm:git:ssh://github.com/nachg/xpathqs-i18n.git")
+                    connection.set("scm:git:git://github.com/nachg/xpathqs-prop.git")
+                    developerConnection.set("scm:git:ssh://github.com/nachg/xpathqs-prop.git")
                     url.set("https://xpathqs.org/")
                 }
             }
             groupId = "org.xpathqs"
-            artifactId = "xpathqs-i18n"
+            artifactId = "xpathqs-prop"
 
             from(components["java"])
         }
@@ -122,7 +122,7 @@ tasks.jacocoTestReport {
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
-            samples.from("src/test/kotlin/org/xpathqs/i18n", "src/main/kotlin/org/xpathqs/i18n")
+            samples.from("src/test/kotlin/org/xpathqs/prop", "src/main/kotlin/org/xpathqs/prop")
         }
     }
 }

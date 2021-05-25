@@ -1,4 +1,4 @@
-package org.xpathqs.i18n.util
+package org.xpathqs.prop.util
 
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field

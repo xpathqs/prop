@@ -1,18 +1,18 @@
-package org.xpathqs.i18n
+package org.xpathqs.prop
 
 import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
-import org.xpathqs.i18n.models.ObjWithInner
+import org.xpathqs.prop.models.ObjWithInner
 
-import org.xpathqs.i18n.models.SimpleObj
+import org.xpathqs.prop.models.SimpleObj
 
-internal class I18nParserTest {
+internal class PropParserTest {
 
     @Test
     fun parseSimple() {
-        I18nParser(SimpleObj, "simple.yml")
+        PropParser(SimpleObj, "simple.yml")
             .parse()
 
         assertAll {
@@ -26,7 +26,7 @@ internal class I18nParserTest {
 
     @Test
     fun parseInner() {
-        I18nParser(ObjWithInner, "inner.yml")
+        PropParser(ObjWithInner, "inner.yml")
             .parse()
 
         assertAll {
