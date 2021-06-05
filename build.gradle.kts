@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.0.1"
+version = "0.1.0"
 
 plugins {
     kotlin("jvm") version "1.5.0"
@@ -33,7 +33,6 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.28")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-  //  implementation("org.reflections:reflections:0.9.12")
 
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
@@ -65,13 +64,13 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/nachg/xpathqs-prop.git")
-                    developerConnection.set("scm:git:ssh://github.com/nachg/xpathqs-prop.git")
+                    connection.set("scm:git:git://github.com/xpathqs/prop.git")
+                    developerConnection.set("scm:git:ssh://github.com/xpathqs/prop.git")
                     url.set("https://xpathqs.org/")
                 }
             }
             groupId = "org.xpathqs"
-            artifactId = "xpathqs-prop"
+            artifactId = "prop"
 
             from(components["java"])
         }
