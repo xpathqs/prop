@@ -37,11 +37,9 @@ class PropParser(
                     } else {
                         it.set(obj, values[it.name])
                     }
-
                 } else {
                     PropParser(it.get(obj), values[it.name] as Map<String, Any>)
                         .parse()
-                   // println("asd")
                 }
             }
         }
