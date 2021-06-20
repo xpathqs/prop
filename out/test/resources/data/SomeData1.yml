@@ -1,0 +1,7 @@
+SomeData1:
+  s: "sss1"
+  user:
+    UserData:
+      name1: "name1"
+      name2: "name2"
+      name3: "3"

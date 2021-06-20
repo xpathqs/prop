@@ -1,8 +1,12 @@
 package org.xpathqs.prop
 
+import org.apache.commons.lang3.ClassUtils
 import org.xpathqs.prop.util.ReflectionScanner
+import org.xpathqs.prop.util.isObject
+import org.xpathqs.prop.util.isPrimitive
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
+import java.lang.Exception
 
 class PropParser(
     private val obj: Any,
@@ -27,14 +31,28 @@ class PropParser(
         val fields = rs.fields
         fields.forEach {
             if (values.containsKey(it.name)) {
-                it.set(null, values[it.name])
+                if(it.isPrimitive) {
+                    if(obj.isObject()) {
+                        it.set(null, values[it.name])
+                    } else {
+                        it.set(obj, values[it.name])
+                    }
+
+                } else {
+                    PropParser(it.get(obj), values[it.name] as Map<String, Any>)
+                        .parse()
+                   // println("asd")
+                }
             }
         }
 
         val objects = rs.innerObjects
         objects.forEach {
-            PropParser(it, values)
-                .parse()
+            try {
+                PropParser(it, values)
+                    .parse()
+            } catch (e: IllegalArgumentException) {
+            }
         }
     }
 }

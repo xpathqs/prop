@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.1.0"
+version = "0.2.0"
 
 plugins {
     kotlin("jvm") version "1.5.0"
@@ -33,6 +33,7 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.28")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("net.oneandone.reflections8:reflections8:0.11.7")
 
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
