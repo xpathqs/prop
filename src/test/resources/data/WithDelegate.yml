@@ -1,0 +1,4 @@
+WithDelegate:
+  f:
+    Delegate:
+      s: "some string"

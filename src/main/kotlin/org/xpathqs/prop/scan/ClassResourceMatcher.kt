@@ -14,15 +14,13 @@ class ClassResourceMatcher(
         val res = ArrayList<Pair<Class<*>, File>>()
 
         classes.forEach {
-            findPair(it)?.let {
-                res.add(it)
-            }
+            findPair(it)?.let { p -> res.add(p) }
         }
 
         return res
     }
 
-    fun findPair(cls: Class<*>): Pair<Class<*>, File>? {
+    private fun findPair(cls: Class<*>): Pair<Class<*>, File>? {
         files.forEach {
             if (isMatched(cls, it)) {
                 return cls to it
@@ -32,7 +30,7 @@ class ClassResourceMatcher(
         return null
     }
 
-    fun isMatched(cls: Class<*>, file: File): Boolean {
+    private fun isMatched(cls: Class<*>, file: File): Boolean {
         matchers.forEach {
             if(it.isMatched(cls, file)) {
                 return true

@@ -1,23 +1,21 @@
 package org.xpathqs.prop
 
+import org.xpathqs.prop.base.IValueProcessor
+import org.xpathqs.prop.impl.NoValueProcessor
+import org.xpathqs.prop.impl.YmlModelExtractor
 import org.xpathqs.prop.scan.ClassResourceMatcher
-import org.xpathqs.prop.scan.ResourceScanner
-
 import org.xpathqs.prop.scan.ClassScanner
+import org.xpathqs.prop.scan.ResourceScanner
 import org.xpathqs.prop.util.getObject
-import java.io.File
 
-//import org.reflections8.scanners.ResourcesScanner
-
-
-class PropScanner(
+open class PropScanner(
     private val rootPackage: String,
-    private val resourceRoot: String
+    private val resourceRoot: String,
+    private val valueProcessor: IValueProcessor = NoValueProcessor(),
 ) {
-
     fun scan() {
         val matcher = ClassResourceMatcher(
-            resourceRoot.substringAfterLast(File.separator),
+            resourceRoot.substringAfterLast("/"),
             ClassScanner(rootPackage).getAll(),
             ResourceScanner(resourceRoot).getAll()
         )
@@ -26,8 +24,9 @@ class PropScanner(
 
         res.forEach {
             PropParser(
-                it.first.getObject(),
-                it.second.inputStream()
+                obj = it.first.getObject(),
+                modelExtractor = YmlModelExtractor(it.second.inputStream()),
+                valueProcessor = valueProcessor
             ).parse()
         }
     }

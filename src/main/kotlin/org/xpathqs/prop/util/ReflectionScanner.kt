@@ -23,7 +23,7 @@ class ReflectionScanner(
         val res = ArrayList<Any>()
 
         obj.javaClass.declaredClasses.forEach {
-            res.add(it.getObject())
+            try{ res.add(it.getObject()) } catch (e: Exception) { }
         }
 
         res
@@ -68,4 +68,9 @@ internal fun Any.isObject(): Boolean {
 internal val Field.isPrimitive: Boolean
     get() {
         return this.type.simpleName == "String" || ClassUtils.isPrimitiveOrWrapper(this.type)
+    }
+
+internal val Class<*>.checkIsPrimitive: Boolean
+    get() {
+        return this.simpleName == "String" || ClassUtils.isPrimitiveOrWrapper(this)
     }

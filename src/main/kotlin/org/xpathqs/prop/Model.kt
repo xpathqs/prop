@@ -5,4 +5,4 @@ package org.xpathqs.prop
     AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class Model()
+annotation class Model

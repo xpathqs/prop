@@ -4,10 +4,9 @@ import java.io.*
 import java.net.URL
 
 class ResourceScanner(
-    val path: String,
-    val loader: ClassLoader = Thread.currentThread().contextClassLoader
+    private val path: String,
+    private val loader: ClassLoader = Thread.currentThread().contextClassLoader
 ) {
-
     fun getAll(): Collection<File> {
         val url: URL = loader.getResource(path)
         val path: String = url.path

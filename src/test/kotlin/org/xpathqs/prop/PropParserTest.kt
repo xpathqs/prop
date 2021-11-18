@@ -4,6 +4,7 @@ import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
+import org.xpathqs.prop.impl.YmlModelExtractor
 import org.xpathqs.prop.models.ObjWithInner
 
 import org.xpathqs.prop.models.SimpleObj
@@ -12,7 +13,7 @@ internal class PropParserTest {
 
     @Test
     fun parseSimple() {
-        PropParser(SimpleObj, "simple.yml")
+        PropParser(SimpleObj, YmlModelExtractor.fromFile("simple.yml"))
             .parse()
 
         assertAll {
@@ -26,7 +27,7 @@ internal class PropParserTest {
 
     @Test
     fun parseInner() {
-        PropParser(ObjWithInner, "inner.yml")
+        PropParser(ObjWithInner, YmlModelExtractor.fromFile("inner.yml"))
             .parse()
 
         assertAll {
