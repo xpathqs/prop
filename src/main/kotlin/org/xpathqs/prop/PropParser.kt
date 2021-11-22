@@ -14,8 +14,8 @@ import kotlin.reflect.KMutableProperty
 class PropParser(
     private val obj: Any,
     private val modelExtractor: IModelExtractor,
-    private val rs: ReflectionScanner = ReflectionScanner(obj),
-    private val valueProcessor: IValueProcessor = NoValueProcessor()
+    private val valueProcessor: IValueProcessor = NoValueProcessor(),
+    private val rs: ReflectionScanner = ReflectionScanner(obj)
 ) {
     private val model by lazy { modelExtractor.getModel() }
     private val values by lazy {
@@ -36,13 +36,17 @@ class PropParser(
     private fun processField(f: Field) {
         val name = f.name.substringBefore("$")
         if (values.containsKey(name)) {
-            if(f.isPrimitive || values[name]?.javaClass?.checkIsPrimitive == true) {
+            val v = values[name]!!
+            if(f.isPrimitive || v.javaClass.checkIsPrimitive) {
                 f.setFieldValue(
-                    valueProcessor.process(values[name]!!)
+                    valueProcessor.process(v!!)
                 )
             } else {
-                PropParser(f.get(obj), ModelExtractor(values[name] as Map<String, Any>))
-                    .parse()
+                PropParser(
+                    f.get(obj),
+                    ModelExtractor(v as Map<String, Any>),
+                    valueProcessor
+                ).parse()
             }
         }
     }
@@ -61,10 +65,9 @@ class PropParser(
     }
 
     private fun parseObjects() {
-        val objects = rs.innerObjects
-        objects.forEach {
+        rs.innerObjects.forEach {
             try {
-                PropParser(it, ModelExtractor(values)).parse()
+                PropParser(it, ModelExtractor(values), valueProcessor).parse()
             } catch (e: IllegalArgumentException) { }
         }
     }
