@@ -1,0 +1,4 @@
+WithInheritance:
+  m:
+    Base:
+      p1: "asd"

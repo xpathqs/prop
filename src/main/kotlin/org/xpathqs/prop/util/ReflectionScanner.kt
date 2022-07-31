@@ -3,21 +3,39 @@ package org.xpathqs.prop.util
 import org.apache.commons.lang3.ClassUtils
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
 class ReflectionScanner(
     private val obj: Any
 ) {
-    val fields: Collection<Field> by lazy {
-        val res = ArrayList<Field>()
+    val fields: Collection<Field>
+        by lazy {
+            var res = ArrayList<Field>()
 
-        obj.javaClass.declaredFields.forEach {
-            it.isAccessible = true
-            FieldUtils.removeFinalModifier(it)
-            res.add(it)
+            var cls = obj::class.java
+            res.addAll(cls.declaredFields.filter {
+                it.name != "Companion" && it.name != "INSTANCE"
+                //        && !Modifier.isStatic(it.modifiers)
+            })
+
+            while (cls.superclass != null
+                && cls.packageName == cls.superclass.packageName
+            ) {
+                cls = cls.superclass
+                if(cls.simpleName != "Companion") {
+                    res.addAll(cls.declaredFields)
+                }
+            }
+
+            var r = removeUnnecessary(res)
+            r = r.distinct()
+            r.forEach {
+                it.isAccessible = true
+                FieldUtils.removeFinalModifier(it)
+                res.add(it)
+            }
+            r
         }
-
-        removeUnnecessary(res)
-    }
 
     val innerObjects: Collection<Any> by lazy {
         val res = ArrayList<Any>()
@@ -34,8 +52,8 @@ class ReflectionScanner(
      */
     private fun removeUnnecessary(fields: Collection<Field>) = fields
         .filter {
-            it.name != "INSTANCE"
-                    && it.name != "\$jacocoData"
+            it.name != "INSTANCE" //remove object-class instances
+             //       && !it.name.contains("\$")  //remove fields which was added dynamically
         }
         .distinctBy { it.name }
 

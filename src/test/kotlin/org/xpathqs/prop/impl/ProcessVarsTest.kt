@@ -19,12 +19,13 @@ internal class ProcessVarsTest {
 
     @Test
     fun selfProcessWithDate() {
+
         assertThat(
             ProcessDate(
                 NoValueProcessor()
             ).process("\${d+20.m.y}")
         ).isEqualTo(
-            "hi"
+            "20.1.2022"
         )
     }
 

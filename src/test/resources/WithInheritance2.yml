@@ -1,0 +1,5 @@
+WithInheritance:
+  m:
+    Base2:
+      p1: "asd"
+      p2: "asd2"

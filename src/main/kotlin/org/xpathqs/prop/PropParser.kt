@@ -29,7 +29,34 @@ class PropParser(
     }
 
     private fun parseFields() {
-        rs.fields.forEach { processField(it) }
+        rs.fields.forEach {
+            processField(it)
+        }
+    }
+
+    fun <T>tryOrNull(block: () -> T): T? {
+        return try {
+            block()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun createObj(clsName: String): Any {
+        val newCls: Class<*> = tryOrNull {
+            this.javaClass.classLoader.loadClass(
+            obj.javaClass.packageName + "." + clsName
+            )
+        } ?: tryOrNull {
+            this.javaClass.classLoader.loadClass(
+                obj.javaClass.name + "$" + clsName
+            )
+        } ?: throw Exception("Can't load class: $clsName")
+
+        val newObj = newCls.declaredConstructors.firstOrNull {
+            it.parameterCount == 0
+        }?.newInstance() ?: newCls.declaredConstructors.first().newInstance(obj)
+        return newObj
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -42,11 +69,21 @@ class PropParser(
                     valueProcessor.process(v!!)
                 )
             } else {
-                PropParser(
-                    f.get(obj),
-                    ModelExtractor(v as Map<String, Any>),
-                    valueProcessor
-                ).parse()
+                var newObj = f.get(obj)
+                if(newObj != null) {
+                    v as Map<String, Any>
+                    val clsName =  v.keys.first()
+                    if(newObj.javaClass.simpleName != clsName) {
+                        newObj = createObj(clsName)
+                        f.set(obj, newObj)
+                    }
+
+                    PropParser(
+                        newObj,
+                        ModelExtractor(v),
+                        valueProcessor
+                    ).parse()
+                }
             }
         }
     }
