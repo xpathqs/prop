@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.2.2"
+version = "0.2.3"
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.7.10"
     id("org.jetbrains.dokka") version "1.4.32"
     `java-library`
     jacoco
     maven
     `maven-publish`
     signing
-    kotlin("plugin.serialization") version "1.5.30"
+    kotlin("plugin.serialization") version "1.7.10"
     id("io.codearte.nexus-staging") version "0.30.0"
     id("io.gitlab.arturbosch.detekt").version("1.18.0-RC2")
     id("info.solidsoft.pitest").version("1.7.0")
@@ -35,8 +35,9 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+
+    implementation("org.xpathqs:log:0.1.6")
 
     implementation("org.yaml:snakeyaml:1.28")
     implementation("org.apache.commons:commons-lang3:3.12.0")

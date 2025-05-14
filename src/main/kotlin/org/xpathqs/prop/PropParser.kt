@@ -1,5 +1,6 @@
 package org.xpathqs.prop
 
+import org.xpathqs.log.Log
 import org.xpathqs.prop.base.IModelExtractor
 import org.xpathqs.prop.base.IValueProcessor
 import org.xpathqs.prop.impl.ModelExtractor
@@ -24,13 +25,20 @@ class PropParser(
     }
 
     fun parse() {
+        Log.action("Values:") {
+            values.forEach { (t, u) ->
+                Log.info("$t, $u")
+            }
+        }
         parseFields()
         parseObjects()
     }
 
     private fun parseFields() {
-        rs.fields.forEach {
-            processField(it)
+        Log.action("Parsing fields") {
+            rs.fields.forEach {
+                processField(it)
+            }
         }
     }
 
@@ -45,13 +53,13 @@ class PropParser(
     private fun createObj(clsName: String): Any {
         val newCls: Class<*> = tryOrNull {
             this.javaClass.classLoader.loadClass(
-            obj.javaClass.packageName + "." + clsName
+                obj.javaClass.packageName + "." + clsName
             )
         } ?: tryOrNull {
             this.javaClass.classLoader.loadClass(
                 obj.javaClass.name + "$" + clsName
             )
-        } ?: throw Exception("Can't load class: $clsName")
+        } ?: throw Exception("Can't load class: ${obj.javaClass.packageName + "." + clsName}")
 
         val newObj = newCls.declaredConstructors.firstOrNull {
             it.parameterCount == 0
@@ -62,28 +70,43 @@ class PropParser(
     @Suppress("UNCHECKED_CAST")
     private fun processField(f: Field) {
         val name = f.name.substringBefore("$")
-        if (values.containsKey(name)) {
-            val v = values[name]!!
-            if(f.isPrimitive || v.javaClass.checkIsPrimitive) {
-                f.setFieldValue(
-                    valueProcessor.process(v!!)
-                )
-            } else {
-                var newObj = f.get(obj)
-                if(newObj != null) {
-                    v as Map<String, Any>
-                    val clsName =  v.keys.first()
-                    if(newObj.javaClass.simpleName != clsName) {
+        Log.action("Processing field ${f.name}") {
+            if (values.containsKey(name)) {
+                val v = values[name]!!
+                if(f.isPrimitive || v.javaClass.checkIsPrimitive) {
+                    Log.info("Primitive field set values to $v")
+                    f.setFieldValue(
+                        valueProcessor.process(v!!)
+                    )
+                } else {
+                    var newObj = f.get(obj)
+                    if(newObj == null) {
+                        v as Map<String, Any>
+                        val clsName =  v.keys.first()
                         newObj = createObj(clsName)
                         f.set(obj, newObj)
                     }
+                    if(newObj != null) {
+                        v as Map<String, Any>
+                        val clsName =  v.keys.first()
+                        if(newObj.javaClass.simpleName != clsName) {
+                            newObj = createObj(clsName)
+                            f.set(obj, newObj)
+                        }
 
-                    PropParser(
-                        newObj,
-                        ModelExtractor(v),
-                        valueProcessor
-                    ).parse()
+                        Log.action("Field is object type") {
+                            PropParser(
+                                newObj,
+                                ModelExtractor(v),
+                                valueProcessor
+                            ).parse()
+                        }
+                    } else {
+                        Log.error("Value for the field was not init")
+                    }
                 }
+            } else {
+                Log.info("no values for this field")
             }
         }
     }
@@ -102,10 +125,16 @@ class PropParser(
     }
 
     private fun parseObjects() {
-        rs.innerObjects.forEach {
-            try {
-                PropParser(it, ModelExtractor(values), valueProcessor).parse()
-            } catch (e: IllegalArgumentException) { }
+        Log.action("Parsing objects") {
+            rs.innerObjects.forEach {
+                try {
+                    PropParser(
+                        obj = it,
+                        modelExtractor = ModelExtractor(values),
+                        valueProcessor = valueProcessor
+                    ).parse()
+                } catch (e: IllegalArgumentException) { }
+            }
         }
     }
 

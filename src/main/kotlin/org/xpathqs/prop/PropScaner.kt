@@ -1,5 +1,6 @@
 package org.xpathqs.prop
 
+import org.xpathqs.log.Log
 import org.xpathqs.prop.base.IValueProcessor
 import org.xpathqs.prop.impl.NoValueProcessor
 import org.xpathqs.prop.impl.YmlModelExtractor
@@ -14,20 +15,24 @@ open class PropScanner(
     private val valueProcessor: IValueProcessor = NoValueProcessor(),
 ) {
     fun scan() {
-        val matcher = ClassResourceMatcher(
-            resourceRoot.substringAfterLast("/"),
-            ClassScanner(rootPackage).getAll(),
-            ResourceScanner(resourceRoot).getAll()
-        )
+        Log.action("Scaning $rootPackage") {
+            val matcher = ClassResourceMatcher(
+                resourceRoot.substringAfterLast("/"),
+                ClassScanner(rootPackage).getAll(),
+                ResourceScanner(resourceRoot).getAll()
+            )
 
-        val res = matcher.match()
+            val res = matcher.match()
 
-        res.forEach {
-            PropParser(
-                obj = it.first.getObject(),
-                modelExtractor = YmlModelExtractor(it.second.inputStream()),
-                valueProcessor = valueProcessor
-            ).parse()
+            res.forEach {
+                Log.action("Parsing ${it.first.name}") {
+                    PropParser(
+                        obj = it.first.getObject(),
+                        modelExtractor = YmlModelExtractor(it.second.inputStream()),
+                        valueProcessor = valueProcessor
+                    ).parse()
+                }
+            }
         }
     }
 }
