@@ -8,6 +8,8 @@ import org.xpathqs.prop.scan.ClassResourceMatcher
 import org.xpathqs.prop.scan.ClassScanner
 import org.xpathqs.prop.scan.ResourceScanner
 import org.xpathqs.prop.util.getObject
+import java.io.File
+import java.nio.file.Files
 
 open class PropScanner(
     private val rootPackage: String,
@@ -17,9 +19,9 @@ open class PropScanner(
     fun scan() {
         Log.action("Scaning $rootPackage") {
             val matcher = ClassResourceMatcher(
-                resourceRoot.substringAfterLast("/"),
-                ClassScanner(rootPackage).getAll(),
-                ResourceScanner(resourceRoot).getAll()
+                root = resourceRoot.substringAfterLast("/"),
+                classes = ClassScanner(rootPackage).getAll(),
+                files = ResourceScanner(resourceRoot).getAll()
             )
 
             val res = matcher.match()
@@ -28,7 +30,7 @@ open class PropScanner(
                 Log.action("Parsing ${it.first.name}") {
                     PropParser(
                         obj = it.first.getObject(),
-                        modelExtractor = YmlModelExtractor(it.second.inputStream()),
+                        modelExtractor = YmlModelExtractor(object {}.javaClass.classLoader.getResourceAsStream(resourceRoot + File.separator + it.second.name)),
                         valueProcessor = valueProcessor
                     ).parse()
                 }

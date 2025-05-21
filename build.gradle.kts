@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.2.3"
+version = "0.2.4"
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -56,7 +56,7 @@ publishing {
         }
         create<MavenPublication>("mavenJava") {
             pom {
-                name.set("XpathQS I18N")
+                name.set("XpathQS Prop")
                 description.set("A prop library")
                 url.set("https://xpathqs.org/")
                 licenses {
