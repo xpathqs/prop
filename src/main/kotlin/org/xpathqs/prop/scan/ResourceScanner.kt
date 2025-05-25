@@ -19,13 +19,18 @@ class ResourceScanner(
 ) {
 
     fun listFilesRecursively(basePath: String): List<File> {
+        val url: URL = runCatching {
+            loader.getResource(basePath)
+        }.getOrNull() ?: return emptyList()
 
-        val url: URL = loader.getResource(basePath)
-        val path: String = url.path.substringBeforeLast(File.separator)
+        var path: String = url.path.substringBeforeLast(File.separator)
 
         return if(path.contains("!")) {
             listFilesFromJar(url, basePath)
         } else {
+            if(path.startsWith("/") && System.getProperty("os.name").lowercase().contains("windows")) {
+                path = path.removePrefix("/")
+            }
             listFilesFromFileSystem(path)
         }
     }
