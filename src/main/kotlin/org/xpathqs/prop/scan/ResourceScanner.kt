@@ -26,9 +26,13 @@ class ResourceScanner(
         var path: String = url.path.substringBeforeLast(File.separator)
 
         return if(path.contains("!")) {
-            listFilesFromJar(url, basePath)
+            var p = basePath
+            if(isWindows()) {
+                p = basePath.substringBeforeLast("!") + "!"
+            }
+            listFilesFromJar(url, p)
         } else {
-            if(path.startsWith("/") && System.getProperty("os.name").lowercase().contains("windows")) {
+            if(path.startsWith("/") && isWindows()) {
                 path = path.removePrefix("/")
             }
             listFilesFromFileSystem(path)
@@ -91,3 +95,5 @@ class ResourceScanner(
         return listFilesRecursively(path)
     }
 }
+
+fun isWindows() = System.getProperty("os.name").lowercase().contains("windows")

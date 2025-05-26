@@ -15,7 +15,7 @@ abstract class RuleMatcher(
     }
 
     protected fun getPathFromRoot(file: File): String {
-        val s = File.separator
+        val s = if(file.absolutePath.contains("!")) "/" else File.separator
 
         return file.absolutePath.substringAfter(s + systemRoot + s)
             .replace(s, ".")

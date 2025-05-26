@@ -11,11 +11,16 @@ import org.xpathqs.prop.util.getObject
 import java.io.File
 import java.nio.file.Files
 
+object Util {
+    val fromJar = ClassLoader.getSystemResource("org/xpathqs/prop/PropScanner.class").file.contains("!")
+}
 open class PropScanner(
     private val rootPackage: String,
     private val resourceRoot: String,
     private val valueProcessor: IValueProcessor = NoValueProcessor(),
 ) {
+
+    private val s = if(Util.fromJar) "/" else File.separator
     fun scan() {
         Log.action("Scaning $rootPackage") {
             val matcher = ClassResourceMatcher(
@@ -30,7 +35,7 @@ open class PropScanner(
                 Log.action("Parsing ${it.first.name}") {
                     PropParser(
                         obj = it.first.getObject(),
-                        modelExtractor = YmlModelExtractor(object {}.javaClass.classLoader.getResourceAsStream(resourceRoot + File.separator + it.second.name)),
+                        modelExtractor = YmlModelExtractor(object {}.javaClass.classLoader.getResourceAsStream(resourceRoot + s + it.second.name)),
                         valueProcessor = valueProcessor
                     ).parse()
                 }
